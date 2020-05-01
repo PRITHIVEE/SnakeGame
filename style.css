@@ -28,7 +28,7 @@ button{
     border: none;
 }
 .game-container{
-    width: 1020px;
+    width: 820px;
     height: 520px;
     background-color: var(--game-background);
     border: 5px solid var(--game-border);
@@ -36,7 +36,7 @@ button{
     overflow: hidden;
 }
 .game-control-container{
-    width: 80%;
+    width: 70%;
     display: flex;
     justify-content: space-around;
 }

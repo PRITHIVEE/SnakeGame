@@ -2,7 +2,7 @@ var snakeHead,snakeBody,food,gameScore,gameStart,isGameOver;
 var snakeHeadPos,keyPress,prevKeyPress,path;
 var moveSnakeFun=[moveLeft,moveUp,moveRight,moveDown];
 var turnSnakeFun=[TurnLeft,TurnUp,TurnRight,TurnDown];
-var gameWidth = 1001, gameHeight=501;
+var gameWidth = 801, gameHeight=501;
 function placeFood(){
     let foodTop = parseInt((Math.random()*10000) % parseInt(gameHeight/10)) *10;
     let foodLeft = parseInt((Math.random()*10000) % parseInt(gameWidth/10)) *10;
