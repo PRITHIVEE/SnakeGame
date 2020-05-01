@@ -106,7 +106,7 @@ button{
     position: absolute;
     z-index: 100;
     font-weight: 900;
-    font-size: 150px;
+    font-size: 125px;
     display: flex;
     flex-direction: column;
     align-items: center;
