@@ -84,6 +84,7 @@ function TurnDown(){
 function startGame(){
     document.getElementById('start-game').disabled = true;
     document.getElementById('pause-game').disabled = false;
+    snakeHead.classList.add('snake-animation');
     gameStart = setInterval(()=>{
         if(snakeHead.offsetTop<0 || snakeHead.offsetLeft<0 
             || snakeHead.offsetTop>gameHeight || snakeHead.offsetLeft>gameWidth){
@@ -104,6 +105,7 @@ function pauseGame(){
     let pauseButton = document.getElementById('pause-game');
     if(pauseButton.innerText == "Pause Game"){
         clearInterval(gameStart);
+        snakeHead.classList.remove('snake-animation');
         pauseButton.innerText = "Resume Game";
     }
     else{

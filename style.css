@@ -54,6 +54,25 @@ button{
 #snake-head::before{
     content: '';
     position: absolute;
+    width: 0;
+    height: 4px;
+    left: -8px;
+    border-right: 10px solid currentColor;
+    border-top: 2.5px solid transparent;
+    border-bottom: 2.5px solid transparent;
+    border-radius: 100% 0 0 100%;
+    transform-origin: right;
+    animation-timing-function: linear;
+    animation-duration: 300ms;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+.snake-animation::before{
+    animation-name: head;
+}
+#snake-head::after{
+    content: '';
+    position: absolute;
     width: 2px;
     height: 2px;
     background-color: #eee;
@@ -96,4 +115,12 @@ button{
 }
 button:disabled{
     background-color: #aaa;
+}
+@keyframes head{
+    from{
+        transform: rotateZ(8deg);
+    }
+    to{
+        transform: rotateZ(-8deg);
+    }
 }
