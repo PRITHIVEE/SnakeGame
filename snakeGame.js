@@ -2,9 +2,10 @@ var snakeHead,snakeBody,food,gameScore,gameStart,isGameOver;
 var snakeHeadPos,keyPress,prevKeyPress,path;
 var moveSnakeFun=[moveLeft,moveUp,moveRight,moveDown];
 var turnSnakeFun=[TurnLeft,TurnUp,TurnRight,TurnDown];
+var gameWidth = 1001, gameHeight=501;
 function placeFood(){
-    let foodTop = (Math.random()*100 >>1)*10;
-    let foodLeft = (Math.random()*100 >>0)*10;
+    let foodTop = parseInt((Math.random()*10000) % parseInt(gameHeight/10)) *10;
+    let foodLeft = parseInt((Math.random()*10000) % parseInt(gameWidth/10)) *10;
     food.style.top = foodTop + 'px';
     food.style.left = foodLeft + 'px';
 }
@@ -31,6 +32,7 @@ function createSnake(){
     gameScore.innerText = "0";
     TurnLeft();
     document.getElementById('start-game').disabled = false;
+    document.getElementById('pause-game').disabled = true;
 }
 function addBody(){
     gameScore.innerText = +gameScore.innerText + 1;
@@ -55,14 +57,16 @@ function addBody(){
 }
 
 function snakeTurn(event){
-    let pkp = keyPress;
-    keyPress = event.keyCode;
-    if(pkp != keyPress)
-        prevKeyPress = pkp;
-    if(Math.abs(keyPress - prevKeyPress) != 2)
-        turnSnakeFun[keyPress-37]();
-    else
-        keyPress = [39,40,37,38][keyPress-37];
+    if(event.keyCode >=37 && event.keyCode<=40){
+        let pkp = keyPress;
+        keyPress = event.keyCode;
+        if(pkp != keyPress)
+            prevKeyPress = pkp;
+        if(Math.abs(keyPress - prevKeyPress) != 2)
+            turnSnakeFun[keyPress-37]();
+        else
+            keyPress = [39,40,37,38][keyPress-37];
+    }
 }
 function TurnLeft(){
     snakeHead.style.transform = 'rotateZ(0deg)';
@@ -79,9 +83,10 @@ function TurnDown(){
 
 function startGame(){
     document.getElementById('start-game').disabled = true;
+    document.getElementById('pause-game').disabled = false;
     gameStart = setInterval(()=>{
         if(snakeHead.offsetTop<0 || snakeHead.offsetLeft<0 
-            || snakeHead.offsetTop>500 || snakeHead.offsetLeft>1000){
+            || snakeHead.offsetTop>gameHeight || snakeHead.offsetLeft>gameWidth){
             gameOver();
             pauseGame();
             return;
@@ -96,12 +101,13 @@ function startGame(){
     },100);
 }
 function pauseGame(){
-    clearInterval(gameStart);
     let pauseButton = document.getElementById('pause-game');
     if(pauseButton.innerText == "Pause Game"){
+        clearInterval(gameStart);
         pauseButton.innerText = "Resume Game";
     }
     else{
+        startGame();
         pauseButton.innerText = "Pause Game";
     }
 }

@@ -94,6 +94,6 @@ button{
     justify-content: center;
     visibility: hidden;
 }
-#start-game:disabled{
+button:disabled{
     background-color: #aaa;
 }
