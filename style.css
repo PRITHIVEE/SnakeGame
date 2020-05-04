@@ -180,14 +180,11 @@ button:disabled{
     height: 100%;
     background-color: blue;
     border-radius: 5px;
-    transform-origin: right;
     animation-timing-function: linear;
     animation-duration: 20s;
     animation-iteration-count: 1;
 }
-.load{
-    animation-name: timingLoader;
-}
+
 #gift{
     width: 10px;
     height: 10px;

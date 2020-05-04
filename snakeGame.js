@@ -5,7 +5,7 @@ var turnSnakeFun=[TurnLeft,TurnUp,TurnRight,TurnDown];
 var giftFunctions = [addExtraLife,slowSpeed,surviveSelfBite];
 var hasLife,lifeId,giftLine;
 var gameWidth = 801, gameHeight=501;
-var totalScore;
+var totalScore, loaderWidth, loaderTimer;
 
 function fixTopLeft(){
     let Top = parseInt((Math.random()*10000) % parseInt(gameHeight/10)) *10;
@@ -129,16 +129,25 @@ function TurnDown(){
     snakeHead.style.transform = 'rotateZ(270deg)';
 }
 
+function loaderController(){
+    powerupTimer.firstElementChild.style.width = loaderWidth + '%';
+        loaderWidth -= 1;
+        if(loaderWidth < 0){
+            clearInterval(loaderTimer);
+            endLoader();
+        }
+}
+function endLoader(){
+    powerupTimer.hidden = true;
+    hasLife[lifeId] = false;
+    clearInterval(gameStart);
+    gameStart = setInterval(startGameController,gameSpeed);   
+}
+
 function startPowerTimer(){
     powerupTimer.hidden = false;
-    powerupTimer.firstElementChild.classList.add('load');
-    setTimeout(()=>{
-        powerupTimer.hidden = true;
-        powerupTimer.firstElementChild.classList.remove('load');
-        hasLife[lifeId] = false;
-        clearInterval(gameStart);
-        gameStart = setInterval(startGameController,gameSpeed);   
-    } ,20000);
+    loaderWidth = 100;
+    loaderTimer = setInterval(loaderController,200);
 }
 function checkGameOver(){
     if(heart.length == 1){
@@ -184,11 +193,13 @@ function pauseGame(){
     let pauseButton = document.getElementById('pause-game');
     if(pauseButton.innerText == "Pause Game"){
         clearInterval(gameStart);
+        clearInterval(loaderTimer);
         snakeHead.classList.remove('snake-animation');
         pauseButton.innerText = "Resume Game";
     }
     else{
         startGame();
+        loaderTimer = setInterval(loaderController,200);
         pauseButton.innerText = "Pause Game";
     }
 }
@@ -231,7 +242,7 @@ function bodyBite(){
     }
     localGameScore = (path.length - 2)>0 ? path.length - 2 : 0;
     gameScore.innerText = localGameScore;
-    snakeBody.style.boxShadow = path.join(',');     
+    snakeBody.style.boxShadow = path.join(',');
 }
 function showGiftContent(){
     giftFunctions[lifeId]();
