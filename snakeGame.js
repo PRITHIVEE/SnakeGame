@@ -1,21 +1,60 @@
-var snakeHead,snakeBody,food,gameScore,gameStart,isGameOver;
-var snakeHeadPos,keyPress,prevKeyPress,path;
+var snakeHead,snakeBody,food,gift,gameScore,gameStart,isGameOver,powerupTimer;
+var snakeHeadPos,keyPress,prevKeyPress,path,localGameScore,life,heart,gameSpeed;
 var moveSnakeFun=[moveLeft,moveUp,moveRight,moveDown];
 var turnSnakeFun=[TurnLeft,TurnUp,TurnRight,TurnDown];
+var giftFunctions = [addExtraLife,slowSpeed,surviveSelfBite];
+var hasLife,lifeId,giftLine;
 var gameWidth = 801, gameHeight=501;
+var totalScore;
+
+function fixTopLeft(){
+    let Top = parseInt((Math.random()*10000) % parseInt(gameHeight/10)) *10;
+    let Left = parseInt((Math.random()*10000) % parseInt(gameWidth/10)) *10;
+    if(Top < 30) Top += 30;
+    return [Top, Left];
+}
+
 function placeFood(){
-    let foodTop = parseInt((Math.random()*10000) % parseInt(gameHeight/10)) *10;
-    let foodLeft = parseInt((Math.random()*10000) % parseInt(gameWidth/10)) *10;
+    [foodTop, foodLeft] = fixTopLeft();
     food.style.top = foodTop + 'px';
     food.style.left = foodLeft + 'px';
 }
 
+function placeGift(){
+    gift.hidden = false;
+    [giftTop, giftLeft] = fixTopLeft();
+    gift.style.top = giftTop + 'px';
+    gift.style.left = giftLeft + 'px';
+}
+
+function hideGift(){
+    gift.style.left = "0";
+    gift.style.top = "0";
+    gift.hidden = true;
+}
+function resetData(){
+    totalScore = 0;
+    localGameScore = 0;
+    gameScore.innerText = '0';
+    gameSpeed = 100;
+    document.getElementById('start-game').disabled = false;
+    document.getElementById('pause-game').disabled = true;
+    life.innerHTML = `  <li><div class="heart"></div></li>
+                        <li><div class="heart"></div></li>
+                        <li><div class="heart"></div></li>`;
+}
 function createGame(){
     food = document.getElementById('food');
+    gift = document.getElementById('gift');
     gameScore = document.getElementById('game-score');
     isGameOver = document.getElementById('game-over');
     snakeHead = document.getElementById('snake-head');
     snakeBody = document.getElementById('snake-body');
+    powerupTimer = document.getElementById('powerup-timer');
+    life = document.getElementById('life');
+    heart = document.getElementsByClassName('heart');
+    giftLine = document.getElementsByClassName('gift-line');
+    resetData();
     createSnake();
 }
 
@@ -23,19 +62,20 @@ function createSnake(){
     keyPress = 37;
     prevKeyPress = 39;
     snakeHeadPos = {top: 200, left: 400};
+    hasLife = [false, false, false];
     path = ["410px 200px","420px 200px"];
     snakeHead.style.top = snakeHeadPos.top + 'px';
     snakeHead.style.left = snakeHeadPos.left + 'px';
     snakeBody.style.boxShadow = path.join(',');
     placeFood();
     isGameOver.style.visibility = "hidden";
-    gameScore.innerText = "0";
     TurnLeft();
-    document.getElementById('start-game').disabled = false;
-    document.getElementById('pause-game').disabled = true;
+    powerupTimer.hidden = true;
+    hideGift();
+    totalScore += localGameScore;
 }
 function addBody(){
-    gameScore.innerText = +gameScore.innerText + 1;
+    gameScore.innerText = ++localGameScore;
     let prevPos1 = path[path.length-1].split(' ').map(x=>parseInt(x));
     let prevPos2 = path[path.length-2].split(' ').map(x=>parseInt(x));
     let newSnakeBody = ``;
@@ -54,6 +94,14 @@ function addBody(){
     }
     path.push(newSnakeBody);
     snakeBody.style.boxShadow += ','+newSnakeBody;
+
+    if(!(localGameScore%3)){
+        placeGift();
+        setTimeout(hideGift,8000);
+    }
+    gameSpeed -= 5;
+    clearInterval(gameStart);
+    gameStart = setInterval(startGameController,gameSpeed);   
 }
 
 function snakeTurn(event){
@@ -81,25 +129,56 @@ function TurnDown(){
     snakeHead.style.transform = 'rotateZ(270deg)';
 }
 
+function startPowerTimer(){
+    powerupTimer.hidden = false;
+    powerupTimer.firstElementChild.classList.add('load');
+    setTimeout(()=>{
+        powerupTimer.hidden = true;
+        powerupTimer.firstElementChild.classList.remove('load');
+        hasLife[lifeId] = false;
+        clearInterval(gameStart);
+        gameStart = setInterval(startGameController,gameSpeed);   
+    } ,20000);
+}
+function checkGameOver(){
+    if(heart.length == 1){
+        heart[0].parentElement.remove();
+        gameOver();
+        pauseGame();
+    }
+    else{
+        heart[heart.length-1].parentElement.remove();
+        createSnake();
+    }
+}
+function startGameController(){
+    if(snakeHead.offsetTop<0 || snakeHead.offsetLeft<0 
+        || snakeHead.offsetTop>gameHeight || snakeHead.offsetLeft>gameWidth){
+        checkGameOver();
+    }
+    else if(snakeHead.offsetTop == food.offsetTop 
+        && snakeHead.offsetLeft == food.offsetLeft){
+            placeFood();
+            addBody();
+        }
+    else if(snakeHead.offsetTop == gift.offsetTop 
+        && snakeHead.offsetLeft == gift.offsetLeft){
+            lifeId = parseInt(Math.random()*100)%3;
+            hasLife[lifeId] = true;
+            hideGift();
+            showGiftContent();
+            startPowerTimer();
+        }
+    moveSnake();
+    bodyBite();
+    gameScore.innerText = localGameScore;
+}
+
 function startGame(){
     document.getElementById('start-game').disabled = true;
     document.getElementById('pause-game').disabled = false;
     snakeHead.classList.add('snake-animation');
-    gameStart = setInterval(()=>{
-        if(snakeHead.offsetTop<0 || snakeHead.offsetLeft<0 
-            || snakeHead.offsetTop>gameHeight || snakeHead.offsetLeft>gameWidth){
-            gameOver();
-            pauseGame();
-            return;
-        }
-        else if(snakeHead.offsetTop == food.offsetTop 
-            && snakeHead.offsetLeft == food.offsetLeft){
-                placeFood();
-                addBody();
-            }
-        moveSnake();
-        bodyBite();
-    },100);
+    gameStart = setInterval(startGameController,gameSpeed);
 }
 function pauseGame(){
     let pauseButton = document.getElementById('pause-game');
@@ -115,6 +194,8 @@ function pauseGame(){
 }
 function gameOver(){
     document.getElementById('game-over').style.visibility = "visible";
+    document.getElementById('ts').innerText = totalScore;
+    resetData();
 }
 function moveSnake(){
     path.unshift(`${snakeHeadPos.left}px ${snakeHeadPos.top}px`);
@@ -140,10 +221,41 @@ function bodyBite(){
     for(let i in path){
         let curPos = path[i].split(' ').map(x=>parseInt(x));
         if(snakeHeadPos.left == curPos[0] && snakeHeadPos.top == curPos[1]){
+            if(!hasLife[2]){
+                checkGameOver();
+                return;
+            }
             path = path.slice(0,i);
             break;
         }
     }
-    gameScore.innerText = path.length - 2;
+    localGameScore = (path.length - 2)>0 ? path.length - 2 : 0;
+    gameScore.innerText = localGameScore;
     snakeBody.style.boxShadow = path.join(',');     
+}
+function showGiftContent(){
+    giftFunctions[lifeId]();
+    giftLine[0].classList.add('line-animation');
+    giftLine[1].classList.add('line-animation');
+    setTimeout(()=>{
+        giftLine[0].classList.remove('line-animation');
+        giftLine[1].classList.remove('line-animation');
+        giftLine[0].innerText = "";
+        giftLine[1].innerText = "";    
+    },2000);
+}
+function addExtraLife(){
+    giftLine[0].innerText = "Extra";
+    giftLine[1].innerText = "Life";
+    life.innerHTML += `<li><div class='heart'></div></li>`;
+}
+function slowSpeed(){
+    giftLine[0].innerText = "Slow";
+    giftLine[1].innerText = "Speed";
+    clearInterval(gameStart);
+    gameStart = setInterval(startGameController,120);   
+}
+function surviveSelfBite(){
+    giftLine[0].innerText = "Survive";
+    giftLine[1].innerText = "SelfBite";
 }

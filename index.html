@@ -10,10 +10,21 @@
 <body onload="createGame()" onkeyup="snakeTurn(event)">
     <div class="game-container">
         <div id="food"></div>
+        <div id="gift"><i></i></div>
         <div id="snake-head"></div>
         <div id="snake-body"></div>
-        <div id="game-over">GAME OVER
-            <button onclick="createSnake()">Retry</button>
+        <div id="powerup-timer"><div class="time-loader"></div></div>
+        <ul id="life">
+            <li><div class="heart"></div></li>
+            <li><div class="heart"></div></li>
+            <li><div class="heart"></div></li>
+        </ul>
+        <div id="game-over">GAME OVER <p id="total-score">Total Score <span id="ts"></span></p>
+            <button onclick="createSnake();">Retry</button>
+        </div>
+        <div class="gift-content">
+            <p class="gift-line"></p>
+            <p class="gift-line"></p>
         </div>
     </div>
     <div class="game-control-container">

@@ -104,7 +104,7 @@ button{
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 100;
+    z-index: 200;
     font-weight: 900;
     font-size: 125px;
     display: flex;
@@ -113,8 +113,158 @@ button{
     justify-content: center;
     visibility: hidden;
 }
+#total-score{
+    font-size: 75px;
+}
 button:disabled{
     background-color: #aaa;
+}
+.heart{
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    color: red;
+    background: currentColor;
+    box-shadow: 10px 0;
+    position: relative;
+}
+.heart::before{
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 7px;
+    left: 0px;
+    border-style: solid;
+    border-width: 10px 0 0 10px;
+    border-color: currentColor transparent transparent transparent;
+}
+.heart::after{
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 7px;
+    left: 10px;
+    border-style: solid;
+    border-width: 10px 10px 0 0;
+    border-color: currentColor transparent transparent transparent;
+}
+#life{
+    display: flex;
+    position: absolute;
+    right: 0;
+    top: 5px;
+    z-index: 100;
+    flex-direction: row-reverse;
+}
+#life > li{
+    width: 25px;
+}
+#gift{
+    position: absolute;
+}
+#powerup-timer{
+    position: absolute;
+    z-index: 100;
+    left: calc(50% - 50px);
+    top: 5px;
+    width: 100px;
+    height: 10px;
+    border-radius: 5px;
+    border: 2px solid #eee;
+    overflow: hidden;
+}
+.time-loader{
+    width: 100%;
+    height: 100%;
+    background-color: blue;
+    border-radius: 5px;
+    transform-origin: right;
+    animation-timing-function: linear;
+    animation-duration: 20s;
+    animation-iteration-count: 1;
+}
+.load{
+    animation-name: timingLoader;
+}
+#gift{
+    width: 10px;
+    height: 10px;
+    background: black;
+    position: absolute;
+}
+#gift::before{
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 2px;
+    background: white;
+    left: -1px;
+    border: 1px solid black;
+}
+#gift::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 5px;
+    background: white;
+    left: 3px;
+    top: 3px;
+    border: 1px solid black;
+}
+#gift > i{
+    position: relative;
+}
+#gift > i::before{
+    content: "";
+    width: 10px;
+    height: 2px;
+    top: -2px;
+    left: -2px;
+    position: absolute;
+    transform: rotateZ(45deg);
+    border: 1px solid black;
+    border-radius: 4px;
+    z-index: -1;
+}
+#gift > i::after {
+    content: "";
+    width: 10px;
+    height: 2px;
+    top: -1px;
+    position: absolute;
+    transform: rotateZ(-45deg);
+    border: 1px solid black;
+    border-radius: 4px;
+    z-index: -1;
+}
+.gift-content{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.gift-line{
+    font-size: 70px;
+    color: var(--game-border);
+    animation-timing-function: cubic-bezier(0.1, 0.7, 1.0, 0.1);
+    animation-duration: 2s;
+    animation-iteration-count: 1;
+}
+.line-animation{
+    animation-name: flyContent;
+}
+.gift-line:nth-child(1){
+    --translate-from: -200px;
+    --translate-to: 850px;
+}
+.gift-line:nth-child(2){
+    --translate-from: 850px;
+    --translate-to: -200px;
 }
 @keyframes head{
     from{
@@ -122,5 +272,21 @@ button:disabled{
     }
     to{
         transform: rotateZ(-8deg);
+    }
+}
+@keyframes timingLoader {
+    from{
+        transform: translateX(0%);
+    }
+    to{
+        transform: translateX(-100%);
+    }
+}
+@keyframes flyContent{
+    from{
+        transform: translateX(var(--translate-from));
+    }
+    to{
+        transform: translateX(var(--translate-to));
     }
 }
