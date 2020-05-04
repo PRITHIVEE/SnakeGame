@@ -39,6 +39,7 @@ function resetData(){
     gameSpeed = 100;
     document.getElementById('start-game').disabled = false;
     document.getElementById('pause-game').disabled = true;
+    document.getElementById('pause-game').innerText = 'Pause Game';
     life.innerHTML = `  <li><div class="heart"></div></li>
                         <li><div class="heart"></div></li>
                         <li><div class="heart"></div></li>`;
@@ -152,8 +153,8 @@ function startPowerTimer(){
 function checkGameOver(){
     if(heart.length == 1){
         heart[0].parentElement.remove();
-        gameOver();
         pauseGame();
+        gameOver();
     }
     else{
         heart[heart.length-1].parentElement.remove();
