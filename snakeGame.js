@@ -95,7 +95,7 @@ function addBody(){
     path.push(newSnakeBody);
     snakeBody.style.boxShadow += ','+newSnakeBody;
 
-    if(!(localGameScore%3)){
+    if(!(localGameScore%7)){
         placeGift();
         setTimeout(hideGift,8000);
     }
@@ -176,7 +176,6 @@ function startGameController(){
             hasLife[lifeId] = true;
             hideGift();
             showGiftContent();
-            startPowerTimer();
         }
     moveSnake();
     bodyBite();
@@ -265,8 +264,10 @@ function slowSpeed(){
     giftLine[1].innerText = "Speed";
     clearInterval(gameStart);
     gameStart = setInterval(startGameController,120);   
+    startPowerTimer();
 }
 function surviveSelfBite(){
     giftLine[0].innerText = "Survive";
     giftLine[1].innerText = "SelfBite";
+    startPowerTimer();
 }
